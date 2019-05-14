@@ -1,9 +1,13 @@
 # mcpcollect_idrac
-Collect logs from Dell Idrac based on information stored in MCP reclass model.  This requires that SSH access be enabled on the IDRAC.
 
-This script will pull power information from mass pillar, use this information to log into a Dell Idrac and pull the logs.
 
-The current form of the script creates an "output script" that is an ssh command to run to collect the logs.
+This tool is intended to be run from the CFG host in your MCP environment
+Pulls logs, service tag, sensor information, and hardware information from dell iDrac based on the MCP Reclass hostname.
+       ** Requires ssh access to be enabled on the iDrac from the CFG host
 
-This was done done becuase some customer have the reclass in environments that dont have access to the IDRAC.  It is necessary to produce the output that can be pasted to the other environment.
+mcpcollect_idrac.sh -h [target host] -o [output script]
+
+    -h -- the hostname in reclass that you wish to collect iDrac information for
+    -o -- specify and output script, with this option the a script will be created that can be executed from a host with ssh access to the iDRAC.  This must be gereated on the CFG host in order to get authentication information from the reclass model
+
 

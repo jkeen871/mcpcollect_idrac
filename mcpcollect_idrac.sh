@@ -12,6 +12,9 @@ function usage {
         echo ""
         echo "   -h -- the hostname in reclass that you wish to collect iDrac information for"
         echo ""
+	echo "   -o -- specify and output script, with this option the a script will be created that can be executed from a host with"
+	echo "         ssh access to the iDRAC.  This must be gereated on the CFG host in order to get authentication information from "
+	echo "         the reclass model"
         exit
 }
 
