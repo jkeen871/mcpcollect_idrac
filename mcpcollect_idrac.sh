@@ -41,14 +41,16 @@ declare -g IpmiCmds=(   \
 
 while getopts "h:o:" arg; do
         case $arg in
-                h) targetIdrac=("$OPTARG");;
+                h) targetHosts+=("$OPTARG");;
                 o) outputFlag=true;outputfile="$localbasedir/$OPTARG";;
                 *) usage;;
                 \?) usage;;
         esac
 done
 if [ $OPTIND -eq 1 ]; then usage ; fi
-
+for targetIdrac in ${targetHosts[@]};
+do
+	echo "$targetIdrac"
         sshOptions="-o StrictHostKeyChecking=no"
         salttest=`sudo salt-call pillar.data maas:region:machines:$targetIdrac 2>/dev/null| tail -1`
         echo $salttest
@@ -70,12 +72,12 @@ if [ $OPTIND -eq 1 ]; then usage ; fi
                         fi
                         for ipmicmd in "${IpmiCmds[@]}";
                         do
-                                getIpmi='echo -e "\n@@@=========$ipmicmd=====\n">> '$localbasedir'/idrac_'$targetIdrac'.log;sshpass -p '$dracpw' ssh -o StrictHostKeyChecking=no '$dracid@$dracip' "'$ipmicmd'" >> '$localbasedir'/idrac_'$targetIdrac'.log'
+                                getIpmi='echo -e "\n@@@========='$ipmicmd'=====\n">> '$localbasedir'/idrac_'$targetIdrac'.log;sshpass -p '$dracpw' ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no '$dracid@$dracip' "'$ipmicmd'" >> '$localbasedir'/idrac_'$targetIdrac'.log'
                                 if [ ! $outputFlag ]; then
                                         echo "Collecting : $ipmicmd"
                                         eval $getIpmi
                                 else
-                                        echo 'echo "Collecting : '$ipmicmd'"' >> $outputfile
+                                        echo 'echo "Collecting '$targetIdrac' : '$ipmicmd'"' >> $outputfile
                                         echo $getIpmi >> $outputfile
                                 fi
                         done
@@ -94,5 +96,5 @@ if [ $OPTIND -eq 1 ]; then usage ; fi
                         exit
                  fi
         fi
-
+done
 
